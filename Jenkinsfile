@@ -1,7 +1,4 @@
-node {
-   environment {
-     registry = "mukeshdhamat/nodejs"
-     registryCredential = 'dockerhub_mukesh'
+node {     
    def commit_id
    stage('Preparation') {
      checkout scm
@@ -14,17 +11,10 @@ node {
        sh 'npm test'
      }
    }
-   stage('Docker Build') {
-     agent any
-     steps {
-       sh 'docker build -t mukeshdhamat/nodejs:${commit-id} .'
-       }
-    }
-   stage('Docker Push') {
-     agent any
-     steps {
-       sh "docker login
-       sh 'docker push mukeshdhamat/nodejs:${commit-id}'
+   stage('docker build/push') {
+     sh 'docker login -u mukeshdhamt -p Secure$$2021'
+     sh 'docker build -t mukeshdhamat:${commit_id}'
+     sh 'docker push mukeshdhamat:${commit_id}'
      }
    }
 }
