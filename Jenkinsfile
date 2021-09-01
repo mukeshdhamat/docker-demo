@@ -17,5 +17,4 @@ node {
      sh 'docker push mukeshdhamat:${commit_id}'
      }
    }
-}
 
