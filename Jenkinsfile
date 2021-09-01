@@ -11,9 +11,17 @@ node {
        sh 'npm test'
      }
    }
-   stage('docker build/push') {
-     docker.withRegistry('https://index.docker.io', 'dockerhub_mukesh') {
-       def app = docker.build("mukeshdhamat/nodejs:${commit_id}", '.').push()
+   stage('Docker Build') {
+     agent any
+     steps {
+       sh 'docker build -t mukeshdhamat/nodejs:${commit-id} .'
+       }
+    }
+   stage('Docker Push') {
+     agent any
+     steps {
+       sh "docker login -u mukeshdhamat -p Mukesh$$123"
+       sh 'docker push mukeshdhamat/nodejs:${commit-id}'
      }
    }
 }
