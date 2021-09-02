@@ -1,19 +1,33 @@
-node {
-   def commit_id
-   stage('Preparation') {
-     checkout scm
-     sh "git rev-parse --short HEAD > .git/commit-id"                        
-     commit_id = readFile('.git/commit-id').trim()
-   }
-   stage('test') {
-     nodejs(nodeJSInstallationName: 'nodejs') {
-       sh 'npm install --only=dev'
-       sh 'npm test'
-     }
-   }
-   stage('docker build/push') {
-     docker.withRegistry('https://index.docker.io/v2/', 'dockerhub') {
-       def app = docker.build("wardviaene/docker-nodejs-demo:${commit_id}", '.').push()
-     }
-   }
-}
+pipeline { 
+    environment { 
+        registry = "mukeshdhamat/nodejs" 
+        registryCredential = 'dockerhub' 
+        dockerImage = '' 
+    }
+    agent any 
+    stages { 
+        stage('Cloning our Git') { 
+            steps { 
+                git 'https://github.com/mukeshdhamat/docker-demo.git'
+            }
+	  } 
+	}  
+        stage('Building our image') { 
+
+            steps { 
+                script { 
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                }
+            } 
+        }
+        stage('Deploy our image') { 
+            steps { 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                } 
+            }
+        } 
+
+    }
