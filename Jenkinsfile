@@ -11,7 +11,14 @@ node {
        sh 'npm test'
      }
    }
-   stage('docker build/push') {
-       def app = docker.build("mukeshdhamat/nodejs:${commit_id}", '.').push()
+   stage('docker build/push') 
+     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: params.JP_DockerMechIdCredential, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+	usr = mukeshdhamat
+	pswd = Secure$$2021
+	}
+	docker.withRegistry("https://index.docker.io/v1/", params.JP_DockerMechIdCredential) {
+	sh "docker login -u ${usr} -p ${pswd} https://index.dcoker.io/v1/"
+	def	image = docker.build("com.att.sharedservices/tomee-uslmonitor")
+	image.push 'latest'
+	}   
    }
-}
