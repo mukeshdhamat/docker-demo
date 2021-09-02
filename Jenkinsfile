@@ -12,9 +12,7 @@ node {
      }
    }
    stage('docker build/push') {
-     sh 'docker login -u mukeshdhamat -p Secure$$2021'
      sh 'docker build -t mukeshdhamat:${commit_id}'
-     sh 'docker push mukeshdhamat:${commit_id}'
      }
    }
 
