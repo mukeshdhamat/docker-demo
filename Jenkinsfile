@@ -12,7 +12,7 @@ node {
      }
    }
    stage('docker build/push') {
-     sh 'docker build -t mukeshdhamat:${commit_id} .'
+     sh 'docker build -t mukeshdhamat:latest .'
      }
    }
 
